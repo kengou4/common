@@ -4,10 +4,23 @@ on:
   workflow_dispatch: {}
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_call:
+    inputs:
+      runs-on:
+        description: "The runner to use for the job"
+        required: false
+        default: "default"
+        type: string
 
 jobs:
   test:
-    runs-on: [ default ]
+    runs-on: ${{ inputs.runs-on}}
     steps:
+    - name: Print Inputs
+      run: |
+        echo "====${{ github.workflow }} Inputs===="
+        echo "Inputs: ${{ toJson(inputs) }}"
+        echo "===="
+    - uses: actions/checkout@v4
     - name: REUSE Compliance Check
-      uses: kengou4/common/workflows/ci-reuse-check.yaml@main
+      uses: fsfe/reuse-action@v4
