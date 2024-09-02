@@ -10,4 +10,4 @@ jobs:
     runs-on: [ default ]
     steps:
     - name: REUSE Compliance Check
-      uses: cloudoperators/common/workflows/ci-reuse-check.yaml@main
+      uses: kengou4/common/workflows/ci-reuse-check.yaml@main
