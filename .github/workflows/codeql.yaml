@@ -11,7 +11,7 @@ on:
 
 jobs:
   codeql:
-    uses: kengou4/common/.github/workflows/compliance/codeql.yaml@main
+    uses: kengou4/common/.github/workflows/shared-codeql.yaml@main
     with:
       runs-on: "['default']"
       language: "['go']"
