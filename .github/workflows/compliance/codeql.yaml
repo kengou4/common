@@ -1,35 +1,50 @@
 name: "CodeQL"
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    types: [ opened, synchronize, reopened ]
-  schedule:
-    - cron: '20 08 * * 1'
+  workflow_call:
+    inputs:
+      runs-on:
+        description: "The runner to use for the job"
+        required: false
+        default: "['default']"
+        type: string
+      language:
+        description: "The language to run the analysis on"
+        required: false
+        default: "['go']"
+        type: string
+      go-version:
+        description: "Go version"
+        required: false
+        default: "['1.22']"
+        type: string
+      fail-fast:
+        default: false
+        description: "Whether to fail fast or not"
+        required: false
+        type: boolean
+      timeout:
+        default: 360
+        description: The number of minutes to wait for the operation to complete.
+        required: false
+        type: number
 
 jobs:
   analyze:
     name: Analyze
-    runs-on: [ default ]
-    timeout-minutes: 360
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: ${{ inputs.timeout }}
     permissions:
-      # required for all workflows
       security-events: write
-      # only required for workflows in private repositories
       actions: read
       contents: read
 
     strategy:
-      fail-fast: false
+      fail-fast: ${{ inputs.fail-fast }}
       matrix:
-        language: [ 'go' ]
-        # CodeQL supports [ 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift' ]
-        # Use only 'java-kotlin' to analyze code written in Java, Kotlin or both
-        # Use only 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
-        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
-        # node-version: [ node ]
-        go-version: [ '1.21' ]
+        os: ${{ fromJson(inputs.runs-on) }}
+        language: ${{ fromJson(inputs.language) }}
+        go-version: ${{ fromJson(inputs.go-version) }}
 
     steps:
     - name: Checkout repository
@@ -39,11 +54,6 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
-
-    # - name: Use Node.js ${{ matrix.node-version }}
-    #   uses: actions/setup-node@v4
-    #   with:
-    #     node-version: ${{ matrix.node-version }}
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
