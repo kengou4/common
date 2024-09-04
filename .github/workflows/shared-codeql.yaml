@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: "Shared-CodeQL"
 
 on:
   workflow_call:
