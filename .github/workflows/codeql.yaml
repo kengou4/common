@@ -3,7 +3,7 @@ name: "CodeQL"
 on:
   workflow_dispatch: {}
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
     types: [ opened, synchronize, reopened ]
   schedule:
@@ -11,6 +11,10 @@ on:
 
 jobs:
   codeql:
+    permissions:
+        security-events: write
+        actions: read
+        contents: read
     uses: kengou4/common/.github/workflows/shared-codeql.yaml@main
     with:
       runs-on: "['default']"
