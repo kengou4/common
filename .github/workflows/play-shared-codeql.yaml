@@ -121,7 +121,7 @@ jobs:
         languages: ${{ matrix.language }}
 
     - name: Autobuild
-      if: ${{ inputs.autobuild }} == true
+      if: inputs.autobuild == true
       uses: github/codeql-action/autobuild@v3
 
     - name: Build
