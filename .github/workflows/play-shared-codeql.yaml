@@ -65,19 +65,19 @@ jobs:
       id: input-check
       shell: bash
       run: |
-        if [[ ${{ fromJson(inputs.go-version) }} == "" ]]; then
+        if [[ ${{ inputs.go-version }} == "" ]]; then
           echo "go_run=false" >> "$GITHUB_OUTPUT"
         else
           echo "go_run=true" >> "$GITHUB_OUTPUT"
           echo "go-version=${{ fromJson(inputs.go-version) }}" >> "$GITHUB_OUTPUT"
         fi
-        if [[ ${{ fromJson(inputs.node-version) }} == "" ]]; then
+        if [[ ${{ inputs.node-version }} == "" ]]; then
           echo "node_run=false" >> "$GITHUB_OUTPUT"
         else
           echo "node_run=true" >> "$GITHUB_OUTPUT"
           echo "node-version=${{ fromJson(inputs.node-version) }}" >> "$GITHUB_OUTPUT"
         fi
-        if [[ ${{ fromJson(inputs.build_query) }} == "" && ${{ inputs.autobuild }} == 'false' ]]; then
+        if [[ ${{ inputs.build_query }} == "" && ${{ inputs.autobuild }} == 'false' ]]; then
           echo "custom_buildquery=false" >> "$GITHUB_OUTPUT"
         else
           echo "custom_buildquery=true" >> "$GITHUB_OUTPUT"
