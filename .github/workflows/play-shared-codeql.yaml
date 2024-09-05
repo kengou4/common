@@ -19,10 +19,10 @@ on:
         default: "['1.22']"
         type: string
       node-version:
-          description: "Go version"
-          required: false
-          default: "['node']"
-          type: string
+        description: "Go version"
+        required: false
+        default: "['node']"
+        type: string
       fail-fast:
         default: false
         description: "Whether to fail fast or not"
