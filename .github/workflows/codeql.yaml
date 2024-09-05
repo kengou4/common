@@ -19,7 +19,9 @@ jobs:
     with:
       runs-on: "['default']"
       language: "['go']"
+      go-check: true
       go-version: "['1.21']"
+      node-check: false
       fail-fast: false  
       timeout: 30
       autobuild: true
