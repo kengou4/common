@@ -22,3 +22,4 @@ jobs:
       go-version: "['1.21']"
       fail-fast: false  
       timeout: 30
+      autobuild: true
