@@ -69,19 +69,19 @@ jobs:
           echo "go_run=false" >> "$GITHUB_OUTPUT"
         else
           echo "go_run=true" >> "$GITHUB_OUTPUT"
-          echo "go-version=${{ fromJson(inputs.go-version) }}" >> "$GITHUB_OUTPUT"
+          echo "go-version=${{ inputs.go-version }}" >> "$GITHUB_OUTPUT"
         fi
         if [[ ${{ inputs.node-version }} == "" ]]; then
           echo "node_run=false" >> "$GITHUB_OUTPUT"
         else
           echo "node_run=true" >> "$GITHUB_OUTPUT"
-          echo "node-version=${{ fromJson(inputs.node-version) }}" >> "$GITHUB_OUTPUT"
+          echo "node-version=${{ inputs.node-version }}" >> "$GITHUB_OUTPUT"
         fi
         if [[ ${{ inputs.build_query }} == "" && ${{ inputs.autobuild }} == 'false' ]]; then
           echo "custom_buildquery=false" >> "$GITHUB_OUTPUT"
         else
           echo "custom_buildquery=true" >> "$GITHUB_OUTPUT"
-          echo "build_query=${{ fromJson(inputs.build_query) }}" >> "$GITHUB_OUTPUT"
+          echo "build_query=${{ inputs.build_query }}" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Set up Go
