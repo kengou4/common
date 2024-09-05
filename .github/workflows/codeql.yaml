@@ -15,7 +15,7 @@ jobs:
         security-events: write
         actions: read
         contents: read
-    uses: kengou4/common/.github/workflows/shared-codeql.yaml@main
+    uses: kengou4/common/.github/workflows/play-shared-codeql.yaml@main
     with:
       runs-on: "['default']"
       language: "['go']"
