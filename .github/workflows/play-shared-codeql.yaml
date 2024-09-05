@@ -26,6 +26,19 @@ on:
         description: "Whether to fail fast or not"
         required: false
         type: boolean
+      autobuild:
+        default: true
+        description: "Use autobuild"
+        required: true
+        type: boolean
+      queries:
+        description: Define specify custom queries for scan
+        required: false
+        type: string
+      build_query:
+        description: Custom build query
+        required: false
+        type: string
       timeout:
         default: 360
         description: The number of minutes to wait for the operation to complete.
@@ -49,50 +62,57 @@ jobs:
         language: ${{ fromJson(inputs.language) }}
         go-version: ${{ fromJson(inputs.go-version) }}
         node-version: ${{ fromJson(inputs.node-version) }}
+        queries: ${{ fromJson(inputs.queries) }}
+        build_query: ${{ fromJson(inputs.build_query) }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    
+  
+    - name: Go && Node check
+      id: input-check
+      run: |
+        if [[ ${{ matrix.go-version }} == "" ]]; then
+          echo "go_run=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "go_run=true" >> "$GITHUB_OUTPUT"
+        fi
+        if [[ ${{ matrix.node-version }} == "" ]]; then
+          echo "node_run=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "node_run=true" >> "$GITHUB_OUTPUT"
+        fi
+        if [[ ${{ matrix.build_query }} == "" && ${{ inputs.autobuild }} == 'false' ]]; then
+          echo "custom_buildquery=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "custom_buildquery=true" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Set up Go
-      if: ${{ matrix.go-version }} == ""
+      if: steps.input-check.outputs.go_run == 'true'
       uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
     
     - name: Use Node.js ${{ matrix.node-version }}
-      if: ${{ matrix.node-version}} == ""
+      if: steps.input-check.outputs.node_run == 'true'
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 
-    # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
+        queries: ${{ matrix.queries }}
 
-        # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
-        # queries: security-extended,security-and-quality
-
-
-    # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
-    # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
+      if: ${{ inputs.autobuild }} == 'true'
       uses: github/codeql-action/autobuild@v3
 
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
-
-    #   If the Autobuild fails above, remove it and uncomment the following three lines.
-    #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
-
-    # - run: |
-    #     echo "Run, Build Application using script"
-    #     ./location_of_script_within_repo/buildscript.sh
+    - name: Build
+      if: steps.input-check.outputs.custom_buildquery == 'true'
+      run: ${{ matrix.build_query }}
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
