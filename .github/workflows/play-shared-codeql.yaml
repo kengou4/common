@@ -68,12 +68,10 @@ jobs:
       id: input
       shell: bash
       run: |
-        if [ "${{ inputs.go-version }}" == "" ]; then
-        else
+        if [ "${{ inputs.go-version }}" != "" ]; then
           echo "go-version=${{ inputs.go-version }}" >> "$GITHUB_OUTPUT"
         fi
-        if [ "${{ inputs.node-version }}" == "" ]; then
-        else
+        if [ "${{ inputs.node-version }}" != "" ]; then
           echo "node-version=${{ inputs.node-version }}" >> "$GITHUB_OUTPUT"
         fi
         if [ "${{ inputs.build_query }}" == "" ] && [ ${{ inputs.autobuild }} == false ]; then
