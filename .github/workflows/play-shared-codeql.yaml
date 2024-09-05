@@ -63,7 +63,6 @@ jobs:
   
     - name: Go && Node check
       id: input-check
-      shell: bash
       run: |
         if [[ ${{ inputs.go-version }} == "" ]]; then
           echo "go_run=false" >> "$GITHUB_OUTPUT"
