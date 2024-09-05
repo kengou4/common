@@ -88,13 +88,13 @@ jobs:
       if: steps.input-check.outputs.go_run == 'true'
       uses: actions/setup-go@v5
       with:
-        go-version: steps.input-check.outputs.go-version
+        go-version: ${{ steps.input-check.outputs.go-version }}
     
     - name: Use Node.js steps.input-check.outputs.node-version
       if: steps.input-check.outputs.node_run == 'true'
       uses: actions/setup-node@v4
       with:
-        node-version: steps.input-check.outputs.node-version
+        node-version: ${{ steps.input-check.outputs.node-version }}
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -107,7 +107,7 @@ jobs:
 
     - name: Build
       if: steps.input-check.outputs.custom_buildquery == 'true'
-      run: steps.input-check.outputs.build_query
+      run: ${{ steps.input-check.outputs.build_query }}
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
