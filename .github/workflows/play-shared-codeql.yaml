@@ -42,27 +42,20 @@ on:
         type: number
 
 jobs:
-  analyze:
-    name: Analyze
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: ${{ inputs.timeout }}
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
+  define-matrix:
+    runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: ${{ inputs.fail-fast }}
-      matrix:
-        os: ${{ fromJson(inputs.runs-on) }}
-        language: ${{ fromJson(inputs.language) }}
+    outputs:
+      go_run: ${{ steps.input.outputs.go_run }}
+      go-version: ${{ steps.input.outputs.go-version }}
+      node_run: ${{ steps.input.outputs.node_run }}
+      node-version: ${{ steps.input.outputs.node-version }}
+      custom_build: ${{ steps.input.outputs.custom_build }}
+      build_query: ${{ steps.input.outputs.build_query }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-  
     - name: Go && Node check
-      id: input-check
+      id: input
       shell: bash
       run: |
         if [ "${{ inputs.go-version }}" == "" ]; then
@@ -78,23 +71,45 @@ jobs:
           echo "node-version=${{ inputs.node-version }}" >> "$GITHUB_OUTPUT"
         fi
         if [ "${{ inputs.build_query }}" == "" ] && [ ${{ inputs.autobuild }} == false ]; then
-          echo "custom_buildquery=false" >> "$GITHUB_OUTPUT"
+          echo "custom_build=false" >> "$GITHUB_OUTPUT"
         else
-          echo "custom_buildquery=true" >> "$GITHUB_OUTPUT"
+          echo "custom_build=true" >> "$GITHUB_OUTPUT"
           echo "build_query=${{ inputs.build_query }}" >> "$GITHUB_OUTPUT"
         fi
+          
+  analyze:
+    name: Analyze
+    runs-on: ${{ matrix.os }}
+    needs: define-matrix
+    timeout-minutes: ${{ inputs.timeout }}
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: ${{ inputs.fail-fast }}
+      matrix:
+        os: ${{ fromJson(inputs.runs-on) }}
+        language: ${{ fromJson(inputs.language) }}
+        go-version: ${{ fromJSON(needs.define-matrix.outputs.go-version) }}
+        node-version: ${{ fromJSON(needs.define-matrix.outputs.node-version) }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Set up Go
-      if: steps.input-check.outputs.go_run == 'true'
+      if: needs.define-matrix.outputs.go_run == 'true'
       uses: actions/setup-go@v5
       with:
-        go-version: ${{ steps.input-check.outputs.go-version }}
+        go-version: ${{ matrix.go-version }}
     
     - name: Use Node.js steps.input-check.outputs.node-version
-      if: steps.input-check.outputs.node_run == 'true'
+      if: needs.define-matrix.outputs.node_run == 'true'
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ steps.input-check.outputs.node-version }}
+        node-version: ${{ matrix.node-version }}
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -106,8 +121,8 @@ jobs:
       uses: github/codeql-action/autobuild@v3
 
     - name: Build
-      if: steps.input-check.outputs.custom_buildquery == 'true'
-      run: ${{ steps.input-check.outputs.build_query }}
+      if: needs.define-matrix.outputs.custom_build == 'true'
+      run: ${{ needs.define-matrix.outputs.build_query }}
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
