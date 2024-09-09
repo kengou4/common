@@ -7,3 +7,5 @@ on:
 jobs:
   build-license-eye:
     uses: kengou4/common/.github/workflows/play-shared-license.yaml@main
+    with:
+      apply_header: false
