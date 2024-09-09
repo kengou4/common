@@ -6,6 +6,8 @@ on:
 
 jobs:
   build-license-eye:
+    permissions:
+      contents: write
     uses: kengou4/common/.github/workflows/play-shared-license.yaml@main
     with:
       apply_header: false
