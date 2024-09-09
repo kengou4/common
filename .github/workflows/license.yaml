@@ -10,4 +10,5 @@ jobs:
       contents: write
     uses: kengou4/common/.github/workflows/play-shared-license.yaml@main
     with:
+      runs-on: "ubuntu-latest"
       apply_header: false
