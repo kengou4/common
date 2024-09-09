@@ -1,0 +1,46 @@
+name: Shared Check & Fix License Header
+
+on:
+  workflow_call:
+    inputs:
+      runs-on:
+        description: "The runner to use for the job"
+        required: false
+        default: "default"
+        type: string
+      apply_header:
+        description: "Apply automatically license header"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  build-license-eye:
+    name: Build LicenseEye
+    runs-on: ${{ inputs.runs-on}}
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Check License Header
+        uses: apache/skywalking-eyes/header@v0.6.0
+        with:
+            config: .github/licenserc.yaml
+            mode: fix
+
+      - name: Apply Changes
+        if: inputs.apply_header == true
+        uses: EndBug/add-and-commit@v9
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+            author_name: License Bot
+            author_email: license_bot@github.com
+            message: 'Automatic application of license header'

@@ -1,0 +1,9 @@
+name: Check & Fix License Header
+on:
+  workflow_dispatch: {}
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-license-eye:
+    uses: kengou4/common/.github/workflows/play-shared-license.yaml@main
