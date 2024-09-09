@@ -18,8 +18,6 @@ jobs:
   build-license-eye:
     name: Build LicenseEye
     runs-on: ${{ inputs.runs-on}}
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout
@@ -35,8 +33,15 @@ jobs:
             config: .github/licenserc.yaml
             mode: fix
 
+  apply-license-header:
+    if: inputs.apply_header == true 
+    name: Apply LicenceHeader
+    runs-on: ${{ inputs.runs-on }}
+    permissions:
+      contents: write
+
+    steps:
       - name: Apply Changes
-        if: inputs.apply_header == true
         uses: EndBug/add-and-commit@v9
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
