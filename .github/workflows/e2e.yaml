@@ -6,6 +6,6 @@ jobs:
   e2e:
     runs-on: 'ubuntu-latest'
     steps:
-      - uses: kengou4/common/workflows/e2e@v1.0.0
+      - uses: kengou4/common/workflows/e2e@main
         with:
           kubernetes-version: '1.31'
