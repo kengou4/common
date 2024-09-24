@@ -12,7 +12,7 @@ inputs:
   kubeconfig-location:
     description: "The location where kind exports it's kubeconfig"
     required: false
-    default: "./e2e.yaml"
+    default: "e2e.yaml"
   kubernetes-version:
     description: "The Kubernetes version used to spin up clusters"
     required: false
@@ -51,6 +51,4 @@ runs:
   - name: run e2e test
     shell: bash
     run: |
-      make e2e-remote
-    env:
-      TEST_KUBECONFIG=${{ inputs.kubeconfig-location }}
+      TEST_KUBECONFIG=${{ inputs.kubeconfig-location }} make e2e-remote
