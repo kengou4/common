@@ -1,0 +1,29 @@
+name: 'e2e-workflow'
+description: 'Run Greenhouse E2E test against a Kubernetes cluster'
+inputs:
+  kubernetes-version:
+    description: 'The Kubernetes version used to spin up clusters'
+    required: true
+  go-version:
+    description: 'The Go version to build greenhousectl'
+    required: false
+    default: '1.22'
+runs:
+  using: "composite"
+  steps:
+  - name: Checkout tools repo
+    uses: actions/checkout@v4
+    with:
+      repository: cloudoperators/greenhouse
+  - name: Set up Go
+    uses: actions/setup-go@v5
+    with:
+      go-version: ${{ inputs.go-version }}
+  - name: Build greenhousectl
+    shell: bash
+    run: |
+      make build-greenhousectl
+  - name: List all
+    shell: bash
+    run: | 
+      ls -latr 
