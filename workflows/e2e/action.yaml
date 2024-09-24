@@ -23,7 +23,7 @@ runs:
     shell: bash
     run: |
       make build-greenhousectl
-  - name: List all
+  - name: run greenhousectl
     shell: bash
     run: | 
-      ls -latr 
+      bin/greenhousectl dev cluster
