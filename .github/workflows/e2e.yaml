@@ -8,5 +8,4 @@ jobs:
     steps:
       - uses: kengou4/common/workflows/e2e@main
         with:
-          kubernetes-version: '1.31'
-          go-version: '1.23'
+          kubernetes-version: 'v1.30.4'
