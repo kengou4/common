@@ -47,43 +47,45 @@ runs:
   - name: compose config.json
     shell: bash
     run: |
-      echo "{
-          "config": [
-            {
-              "cluster": {
-                "name": "${{ inputs.remote-cluster-name }}"
-              }
+      echo "
+      {
+        "config": [
+          {
+            "cluster": {
+              "name": "${{ inputs.remote-cluster-name }}"
+            }
+          },
+          {
+            "cluster": {
+              "name": "${{ inputs.admin-cluster-name }}",
+              "namespace": "${{ inputs.namespace }}"
             },
-            {
-              "cluster": {
-                "name": "${{ inputs.admin-cluster-name }}",
-                "namespace": "${{ inputs.namespace }}"
+            "dependencies": [
+              {
+                "manifest": {
+                  "release": "greenhouse",
+                  "chartPath": "charts/idproxy",
+                  "crdOnly": true
+                }
               },
-              "dependencies": [
-                {
-                  "manifest": {
-                    "release": "greenhouse",
-                    "chartPath": "charts/idproxy",
-                    "crdOnly": true
-                  }
-                },
-                {
-                  "manifest": {
-                    "release": "greenhouse",
-                    "chartPath": "charts/manager",
-                    "valuesPath": "dev-env/localenv/sample.values.yaml",
-                    "crdOnly": false,
-                    "webhook": {
-                      "devMode": false,
-                      "dockerFile": "./",
-                      "envs": []
-                    }
+              {
+                "manifest": {
+                  "release": "greenhouse",
+                  "chartPath": "charts/manager",
+                  "valuesPath": "dev-env/localenv/sample.values.yaml",
+                  "crdOnly": false,
+                  "webhook": {
+                    "devMode": false,
+                    "dockerFile": "./",
+                    "envs": []
                   }
                 }
-              ]
-            }
-          ]
-        } " >> $RUNNER_TEMP/config.json
+              }
+            ]
+          }
+        ]
+      } 
+      " >> $RUNNER_TEMP/config.json
   - name: run greenhousectl
     shell: bash
     run: | 
