@@ -47,7 +47,7 @@ runs:
   - name: compose config.json
     shell: bash
     run: |
-      echo "
+      cat << EOF > $RUNNER_TEMP/config.json
       {
         "config": [
           {
@@ -84,8 +84,8 @@ runs:
             ]
           }
         ]
-      } 
-      " >> $RUNNER_TEMP/config.json
+      }
+      EOF
   - name: run greenhousectl
     shell: bash
     run: | 
