@@ -47,8 +47,11 @@ runs:
   - name: export kubeconfig
     shell: bash
     run: |
-      kind export kubeconfig --name ${{ inputs.cluster-name }} --kubeconfig ${{ inputs.kubeconfig-location }} 
+      kind export kubeconfig --name ${{ inputs.cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.yaml
   - name: run e2e test
     shell: bash
     run: |
-      TEST_KUBECONFIG=${{ inputs.kubeconfig-location }} make e2e-remote
+      export TEST_KUBECONFIG=$RUNNER_TEMP/e2e.yaml
+      cat $RUNNER_TEMP/e2e.yaml
+      echo $TEST_KUBECONFIG
+      make e2e-remote
