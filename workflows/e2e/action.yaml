@@ -1,10 +1,14 @@
 name: "e2e-workflow"
 description: "Run Greenhouse E2E test against a Kubernetes cluster"
 inputs:
-  cluster-name:
+  admin-cluster-name:
     description: "The kind cluster name"
     required: false
-    default: "e2e"
+    default: "greenhouse-admin"
+  remote-cluster-name:
+    description: "The kind cluster name"
+    required: false
+    default: "greenhouse-remote"
   namespace:
     description: "The namespcace to be created in the kind cluster"
     required: false
@@ -40,18 +44,56 @@ runs:
     uses: helm/kind-action@v1.10.0
     with:
       install_only: true
+  - name: compose config.json
+    shell: bash
+    run: |
+      echo "{
+          "config": [
+            {
+              "cluster": {
+                "name": "${{ inputs.remote-cluster-name }}"
+              }
+            },
+            {
+              "cluster": {
+                "name": "${{ inputs.admin-cluster-name }}",
+                "namespace": "${{ inputs.namespace }}"
+              },
+              "dependencies": [
+                {
+                  "manifest": {
+                    "release": "greenhouse",
+                    "chartPath": "charts/idproxy",
+                    "crdOnly": true
+                  }
+                },
+                {
+                  "manifest": {
+                    "release": "greenhouse",
+                    "chartPath": "charts/manager",
+                    "valuesPath": "dev-env/localenv/sample.values.yaml",
+                    "crdOnly": false,
+                    "webhook": {
+                      "devMode": false,
+                      "dockerFile": "./",
+                      "envs": []
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        } " >> $RUNNER_TEMP/config.json
   - name: run greenhousectl
     shell: bash
     run: | 
-      bin/greenhousectl dev cluster create --name ${{ inputs.cluster-name }} --namespace ${{ inputs.namespace }} --version ${{ inputs.kubernetes-version }}
+      bin/greenhousectl dev setup -f $RUNNER_TEMP/config.json
   - name: export kubeconfig
     shell: bash
     run: |
-      kind export kubeconfig --name ${{ inputs.cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.yaml
+      kind export kubeconfig --name ${{ inputs.remote-cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.kubeconfig
+      kind export kubeconfig --name ${{ inputs.admin-cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.internal.kubeconfig
   - name: run e2e test
     shell: bash
     run: |
-      export TEST_KUBECONFIG=$RUNNER_TEMP/e2e.yaml
-      cat $RUNNER_TEMP/e2e.yaml
-      echo $TEST_KUBECONFIG
-      make e2e-remote
+      USE_EXISTING_CLUSTER=true TEST_KUBECONFIG=$RUNNER_TEMP/e2e.kubeconfig INTERNAL_KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig go test ./test/e2e/... -coverprofile cover.out -v
