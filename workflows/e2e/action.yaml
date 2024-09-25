@@ -92,11 +92,12 @@ runs:
     shell: bash
     run: |
       kind export kubeconfig --name ${{ inputs.remote-cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.kubeconfig
-      kind export kubeconfig --internal --name ${{ inputs.admin-cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.internal.kubeconfig
+      kind export kubeconfig --name ${{ inputs.admin-cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.internal.kubeconfig
   - name: run e2e test
     shell: bash
     run: |
       KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig kubectl get pods -n greenhousectl
+      KUBECONFIG=$RUNNER_TEMP/e2e.kubeconfig kubectl get pods -A
       sleep 30s
       KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig kubectl get pods -n greenhousectl
       USE_EXISTING_CLUSTER=true TEST_KUBECONFIG=$RUNNER_TEMP/e2e.kubeconfig INTERNAL_KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig go test ./test/e2e/... -coverprofile cover.out -v
