@@ -48,15 +48,15 @@ runs:
           "config":[
             {
                 "cluster":{
-                  "name":"remote-cluster",
-                  "version":"v1.30.4"
+                  "name": "${{ inputs.remote-cluster-name }}",
+                  "version": "${{ inputs.kubernetes-version }}"
                 }
             },
             {
                 "cluster":{
-                  "name":"admin-cluster",
-                  "namespace":"greenhouse",
-                  "version":"v1.30.4"
+                  "name": "${{ inputs.admin-cluster-name }}",
+                  "namespace": "${{ inputs.namespace }}",
+                  "version": "${{ inputs.kubernetes-version }}"
                 },
                 "dependencies":[
                   {
