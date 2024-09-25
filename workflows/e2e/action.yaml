@@ -96,4 +96,7 @@ runs:
   - name: run e2e test
     shell: bash
     run: |
+      KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig kubectl get pods -n greenhousectl
+      sleep 30s
+      KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig kubectl get pods -n greenhousectl
       USE_EXISTING_CLUSTER=true TEST_KUBECONFIG=$RUNNER_TEMP/e2e.kubeconfig INTERNAL_KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig go test ./test/e2e/... -coverprofile cover.out -v
