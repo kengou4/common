@@ -13,10 +13,6 @@ inputs:
     description: "The namespcace to be created in the kind cluster"
     required: false
     default: "greenhouse"
-  kubeconfig-location:
-    description: "The location where kind exports it's kubeconfig"
-    required: false
-    default: "e2e.yaml"
   kubernetes-version:
     description: "The Kubernetes version used to spin up clusters"
     required: false
@@ -52,13 +48,15 @@ runs:
         "config": [
           {
             "cluster": {
-              "name": "${{ inputs.remote-cluster-name }}"
+              "name": "${{ inputs.remote-cluster-name }}",
+              "version": "${{ inputs.kubernetes-version }}"
             }
           },
           {
             "cluster": {
               "name": "${{ inputs.admin-cluster-name }}",
-              "namespace": "${{ inputs.namespace }}"
+              "namespace": "${{ inputs.namespace }}",
+              "version": "${{ inputs.kubernetes-version }}"
             },
             "dependencies": [
               {
