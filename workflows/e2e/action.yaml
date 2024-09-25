@@ -45,43 +45,48 @@ runs:
     run: |
       cat << EOF > $RUNNER_TEMP/config.json
       {
-        "config": [
-          {
-            "cluster": {
-              "name": "${{ inputs.remote-cluster-name }}",
-              "version": "${{ inputs.kubernetes-version }}"
-            }
-          },
-          {
-            "cluster": {
-              "name": "${{ inputs.admin-cluster-name }}",
-              "namespace": "${{ inputs.namespace }}",
-              "version": "${{ inputs.kubernetes-version }}"
+          "config":[
+            {
+                "cluster":{
+                  "name":"remote-cluster",
+                  "version":"v1.30.4"
+                }
             },
-            "dependencies": [
-              {
-                "manifest": {
-                  "release": "greenhouse",
-                  "chartPath": "charts/idproxy",
-                  "crdOnly": true
-                }
-              },
-              {
-                "manifest": {
-                  "release": "greenhouse",
-                  "chartPath": "charts/manager",
-                  "valuesPath": "dev-env/localenv/sample.values.yaml",
-                  "crdOnly": false,
-                  "webhook": {
-                    "devMode": false,
-                    "dockerFile": "./",
-                    "envs": []
+            {
+                "cluster":{
+                  "name":"admin-cluster",
+                  "namespace":"greenhouse",
+                  "version":"v1.30.4"
+                },
+                "dependencies":[
+                  {
+                      "manifest":{
+                        "release":"greenhouse",
+                        "chartPath":"charts/idproxy",
+                        "crdOnly":true
+                      }
+                  },
+                  {
+                      "manifest":{
+                        "release":"greenhouse",
+                        "chartPath":"charts/manager",
+                        "valuesPath":"dev-env/localenv/sample.values.yaml",
+                        "crdOnly":false,
+                        "webhook":{
+                            "devMode":false,
+                            "dockerFile":"./",
+                            "envs":[
+                              {
+                                  "name":"CONTROLLERS_ONLY",
+                                  "value":"true"
+                              }
+                            ]
+                        }
+                      }
                   }
-                }
-              }
-            ]
-          }
-        ]
+                ]
+            }
+          ]
       }
       EOF
   - name: run greenhousectl
@@ -96,8 +101,5 @@ runs:
   - name: run e2e test
     shell: bash
     run: |
-      KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig kubectl get pods -n greenhousectl
-      KUBECONFIG=$RUNNER_TEMP/e2e.kubeconfig kubectl get pods -A
       sleep 30s
-      KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig kubectl get pods -n greenhousectl
       USE_EXISTING_CLUSTER=true TEST_KUBECONFIG=$RUNNER_TEMP/e2e.kubeconfig INTERNAL_KUBECONFIG=$RUNNER_TEMP/e2e.internal.kubeconfig go test ./test/e2e/... -coverprofile cover.out -v
