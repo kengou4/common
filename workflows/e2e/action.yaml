@@ -96,8 +96,8 @@ runs:
   - name: export kubeconfig
     shell: bash
     run: |
-      kind export kubeconfig --name ${{ inputs.remote-cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.kubeconfig
-      kind export kubeconfig --name ${{ inputs.admin-cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.internal.kubeconfig
+      kind export kubeconfig --name ${{ inputs.admin-cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.kubeconfig
+      kind export kubeconfig --internal --name ${{ inputs.admin-cluster-name }} --kubeconfig $RUNNER_TEMP/e2e.internal.kubeconfig
   - name: run e2e test
     shell: bash
     run: |
