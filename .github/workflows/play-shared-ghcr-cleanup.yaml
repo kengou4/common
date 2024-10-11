@@ -35,6 +35,14 @@ on:
                 (wildcard or regular expression) by enabling the expand-packages option.
             required: false
             type: string
+    
+        expand-packages:
+            description: >
+                Enable wildcard or regular expression support on the package(s) option to
+                support dynamic package selection. Requires use of a Personal Access Token
+                (PAT) for the token value.
+            required: false
+            type: boolean
 
         # Cleanup Options
 
@@ -118,6 +126,7 @@ jobs:
             owner: ${{ inputs.owner }}
             repository: ${{ inputs.repository }}
             package: ${{ inputs.package }}
+            expand-packages: ${{ inputs.expand-packages }}
             exclude-tags: ${{ inputs.exclude-tags }}
             delete-untagged: ${{ inputs.delete-untagged }}
             delete-ghost-images: ${{ inputs.delete-ghost-images }}
