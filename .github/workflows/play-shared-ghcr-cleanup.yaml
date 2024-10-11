@@ -125,7 +125,7 @@ jobs:
             dry-run: ${{ inputs.dry-run }}
             owner: ${{ inputs.owner }}
             repository: ${{ inputs.repository }}
-            package: ${{ inputs.package }}
+            package: ${{ fromJson(inputs.package) }}
             expand-packages: ${{ inputs.expand-packages }}
             exclude-tags: ${{ inputs.exclude-tags }}
             delete-untagged: ${{ inputs.delete-untagged }}
