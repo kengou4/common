@@ -13,7 +13,7 @@ on:
         token:
             description: >
                 Token to authenticate with the ghcr.io registry and the GitHub API
-            required: true
+            required: false
             type: string
 
         owner:
@@ -125,4 +125,4 @@ jobs:
             delete-partial-images: ${{ inputs.delete-partial-images }}
             keep-n-tagged: ${{ inputs.keep-n-tagged }}
             validate: ${{ inputs.validate }}
-            token: ${{ inputs.token }}
+            token: ${{ secrets.GITHUB_TOKEN }}
