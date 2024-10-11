@@ -10,12 +10,6 @@ on:
             default: "default"
             type: string
 
-        token:
-            description: >
-                Token to authenticate with the ghcr.io registry and the GitHub API
-            required: false
-            type: string
-
         owner:
             description: >
                 Owner of the package (user or organization). Defaults to project owner
