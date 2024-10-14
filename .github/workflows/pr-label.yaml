@@ -15,4 +15,9 @@ jobs:
           id: chart-name
           run: |
             echo "VERSION=${GITHUB_REF//\//-}"
-            echo ${{ github.event.pull_request.labels.*.name }}
+            echo "ARRAY=${{ github.event.pull_request.labels.*.name }}"
+        
+        - name: Conditionally Run
+          if: contains(github.event.pull_request.labels.*.name,'chart-beta')
+          run: |
+              echo "let's run"
