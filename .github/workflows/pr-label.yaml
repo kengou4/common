@@ -1,0 +1,16 @@
+---
+name: Delete closed PR helm chart
+
+"on":
+    workflow_dispatch: {}
+    pull_request:
+        types:
+            - closed
+
+jobs:
+    cleanup-pr-tag:
+        runs-on: [ default ]
+        steps:
+        - name: Set image version for PR to branch name
+          id: chart-name
+          run: echo "VERSION=${GITHUB_HEAD_REF//\//-}"
