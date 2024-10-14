@@ -4,11 +4,11 @@ name: Delete closed PR helm chart
 "on":
     workflow_dispatch: {}
     pull_request:
-        types: [ opened, synchronize, reopened ]
+        types: [ opened, synchronize, reopened, labeled ]
 
 jobs:
     cleanup-pr-tag:
-        if: contains(github.event.pull_request.labels.*.name, 'chart-beta')
+        if: contains(github.event.pull_request.labels.name, 'chart-beta')
         runs-on: [ default ]
         steps:
         - name: Set image version for PR to branch name
