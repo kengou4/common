@@ -15,3 +15,5 @@ jobs:
           id: chart-name
           run: |
             echo "VERSION=${GITHUB_REF//\//-}"
+            echo "PR_NUMBER=${{ github.event.number }}"
+            echo "TAG=pr-${{ github.event.number }}"
