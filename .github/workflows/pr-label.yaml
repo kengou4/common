@@ -15,4 +15,4 @@ jobs:
           id: chart-name
           run: |
             echo "VERSION=${GITHUB_REF//\//-}"
-            echo ${{ github.event.pull_request.labels }}
+            echo ${{ github.event.pull_request.labels.*.name }}
