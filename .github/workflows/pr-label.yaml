@@ -8,7 +8,7 @@ name: Delete closed PR helm chart
 
 jobs:
     cleanup-pr-tag:
-        if: contains(github.event.pull_request.labels.name, 'chart-beta')
+        if: ${{ github.event.label.name == 'chart-beta' }}
         runs-on: [ default ]
         steps:
         - name: Set image version for PR to branch name
