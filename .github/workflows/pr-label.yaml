@@ -12,4 +12,8 @@ jobs:
         steps:
         - name: Set image version for PR to branch name
           id: chart-name
-          run: echo "VERSION=${GITHUB_HEAD_REF//\//-}"
+          run: |
+            echo "VERSION=${GITHUB_HEAD_REF//\//-}"
+            echo "VERSION2=${GITHUB_BASE_REF//\//-}"
+            echo "VERSION3=${GITHUB_REF//\//-}"
+            echo "VERSION4=${GITHUB_REF_NAME//\//-}"
